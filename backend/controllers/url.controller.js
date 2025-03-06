@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import Url from "../models/url.model.js";
 import { nanoid } from "nanoid";
-
+import User from "../models/user.model.js";
 async function HandleGenerateNewUrl(req, res) {
   try {
     const body = req.body;
@@ -9,23 +9,13 @@ async function HandleGenerateNewUrl(req, res) {
     if (!body.url)
       return res.status(400).json({ success: false, error: "Url is required" });
 
-    // Validate URL format
-    // try {
-    //   new Url(body.url);
-    // } catch (err) {
-    //   return res.status(400).json({
-    //     success: false,
-    //     error: "Invalid URL format",
-    //   });
-    // }
-
-    const shortID = nanoid(8); // Generate Unique shortID like 083yd7w1
+    const shortID = nanoid(8);
 
     const shortURL = await Url.create({
       shortId: shortID,
       redirectURL: body.url,
       visitHistory: [],
-      // createdBy: req.user._id,
+      createdBy: body.user,
     });
 
     return res.status(200).json({
@@ -43,4 +33,38 @@ async function HandleGenerateNewUrl(req, res) {
   }
 }
 
-export { HandleGenerateNewUrl };
+async function HandleGetAllShortUrlsbyUserId(req, res) {
+  try {
+    const user_id = req.params.user_id;
+    if (!mongoose.Types.ObjectId.isValid(user_id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid user ID format",
+      });
+    }
+
+    const user = await User.findById(user_id);
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    const urls = await Url.find({ createdBy: user_id }).sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      success: true,
+      count: urls.length,
+      urls: urls,
+    });
+  } catch (error) {
+    console.error("Error in HandleGetAllShortUrlsbyUserId:", error);
+    return res.status(500).json({
+      success: false,
+      error: "Internal server error",
+      message: error.message,
+    });
+  }
+}
+
+export { HandleGenerateNewUrl, HandleGetAllShortUrlsbyUserId };
