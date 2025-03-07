@@ -67,4 +67,25 @@ async function HandleGetAllShortUrlsbyUserId(req, res) {
   }
 }
 
-export { HandleGenerateNewUrl, HandleGetAllShortUrlsbyUserId };
+async function HandleGetAnalytics(req, res) {
+  try {
+    const shortId = req.params.shortId;
+    const result = await Url.findOne({ shortId });
+    return res.json({
+      totalClicks: result.visitHistory.length,
+    });
+  } catch (error) {
+    console.error("Error in HandleGetAnalytics:", error);
+    return res.status(500).json({
+      success: false,
+      error: "Internal server error",
+      message: error.message,
+    });
+  }
+}
+
+export {
+  HandleGenerateNewUrl,
+  HandleGetAllShortUrlsbyUserId,
+  HandleGetAnalytics,
+};

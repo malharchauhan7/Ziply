@@ -11,7 +11,7 @@ const Home = () => {
   const [shortUrls, setshortUrls] = useState([]);
   const [username, setusername] = useState("");
   const [isLogoutOpen, setisLogoutOpen] = useState(false);
-
+  const [isModelOpen, setisModelOpen] = useState(false);
   const HandleGetName = () => {
     const name = localStorage.getItem("name");
     setusername(name);
@@ -24,6 +24,7 @@ const Home = () => {
         return { success: false, message: "Please Login" };
       }
       const resp = await axios.get(`/api/v1/url/${id}`);
+      console.log(resp.data.urls);
       setshortUrls(resp.data.urls);
     } catch (error) {
       console.error("Error Fetching Urls" + error);
@@ -65,6 +66,8 @@ const Home = () => {
       navigate("/login");
     }, 1200);
   };
+
+  // const HandleGetClicksHistory = async () => {};
 
   return (
     <div className="bg-gradient-to-b from-indigo-300  to-teal-200 h-screen p-8 flex flex-col items-center justify-top">
@@ -120,22 +123,30 @@ const Home = () => {
           <div className="flex flex-col gap-2">
             <h3 className="font-mono text-xl mb-2">Your Short URLs:</h3>
             {shortUrls?.map((url, index) => (
-              <div
-                key={index}
-                className="bg-teal hover:bg-teal-100 p-3 rounded flex justify-between items-center transition-all duration-200"
-              >
-                <span className="cursor-pointer text-lg font-semibold">
-                  http://localhost:8001/{url.shortId}
-                </span>
-
-                <a
-                  href={url.redirectURL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 hover:text-blue-800"
+              <div>
+                <div
+                  key={index}
+                  className="bg-teal hover:bg-teal-100 p-3 rounded flex justify-between items-center transition-all duration-200"
                 >
-                  Original URL ↗
-                </a>
+                  <span className="cursor-pointer text-lg font-semibold">
+                    http://localhost:8001/{url.shortId}
+                  </span>
+
+                  <a
+                    href={url.redirectURL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:text-blue-800"
+                  >
+                    Original URL ↗
+                  </a>
+                  <div className=" gap-2  flex font-semibold items-center">
+                    <h1>Clicks :</h1>
+                    <h1 className="px-1.5 py-0.5 rounded bg-teal-100/80 shadow-md ">
+                      {url.visitHistory.length}
+                    </h1>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
