@@ -3,7 +3,7 @@
 A modern URL shortening service built with the MERN stack (MongoDB, Express.js, React.js, Node.js).
 
 ## Project Demo
-[PROEJECT DEMO](./files/projectdemo.mp4)
+![PROEJECT DEMO](./files/projectdemo.gif)
 
 
 ## Features
@@ -59,7 +59,7 @@ npm install
 
 3. Install Frontend Dependencies:
 ```bash
-cd ../frontend
+cd frontend
 npm install
 ```
 
@@ -69,7 +69,7 @@ npm install
 1. Start Backend Server:
 ```bash
 cd backend
-npm start
+npm run dev
 ```
 
 2. Start Frontend Development Server:
